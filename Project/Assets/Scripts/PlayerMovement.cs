@@ -33,13 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Поворачиваем объект по оси Z
         float rotationAmount = moveZ * rotationSpeed * Time.deltaTime;
-        transform.Rotate(Vector3.up, rotationAmount);
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Нажали пробел");
-            Debug.Log($"IsGrounded = {isGrounded}");
-        }
+        rb.rotation *= Quaternion.Euler(0f, rotationAmount, 0f);
 
         // Прыжок
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
