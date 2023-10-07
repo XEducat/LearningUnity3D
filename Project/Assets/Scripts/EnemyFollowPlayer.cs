@@ -4,12 +4,16 @@ public class EnemyFollowPlayer : MonoBehaviour
 {
     public float moveSpeed = 3f; // Скорость движения врага
     public int damageAmount = 10; // Урон, который враг наносит игроку
+    public float attackCooldown = 1f; // Задержка между ударами врага
 
     private Transform player; // Ссылка на трансформ игрока
+    private Rigidbody rb; // Компонент Rigidbody врага
+    private bool canAttack = true; // Флаг, позволяющий врагу атаковать
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        rb = GetComponent<Rigidbody>(); // Получаем ссылку на Rigidbody врага
     }
 
     void Update()
@@ -29,7 +33,7 @@ public class EnemyFollowPlayer : MonoBehaviour
             Vector3 direction = player.position - transform.position;
             direction.y = 0f;
             direction.Normalize();
-            transform.Translate(direction * moveSpeed * Time.deltaTime);
+            rb.MovePosition(transform.position + direction * moveSpeed * Time.deltaTime);
         }
     }
 
@@ -38,16 +42,19 @@ public class EnemyFollowPlayer : MonoBehaviour
     public float knockbackDuration = 0.2f; // Продолжительность откидывания игрока
     private bool isKnockback = false; // Флаг, определяющий, происходит ли откидывание
     private float knockbackTimer = 0f; // Таймер для отслеживания времени откидывания
-    // Обработка столкновения с игроком
-    void OnCollisionEnter(Collision collision)
+                                       // Обработка столкновения с игроком
+
+
+    void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Наносим урон игроку
-            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
+            // Проверяем, может ли враг атаковать
+            if (canAttack)
             {
-                playerHealth.TakeDamage(damageAmount);
+                // Наносим урон игроку
+                Player playerHealth = collision.gameObject.GetComponent<Player>();
+                playerHealth?.TakeDamage(damageAmount);
 
                 // Запускаем процесс откидывания игрока
                 if (!isKnockback)
@@ -62,7 +69,17 @@ public class EnemyFollowPlayer : MonoBehaviour
                     // Применяем силу откидывания к игроку
                     collision.gameObject.GetComponent<Rigidbody>().AddForce(knockbackDirection * knockbackForce, ForceMode.Impulse);
                 }
+
+                // Запускаем таймер задержки перед следующей атакой
+                canAttack = false;
+                Invoke("ResetAttackCooldown", attackCooldown);
             }
         }
+    }
+
+    // Сбрасываем таймер задержки перед следующей атакой
+    void ResetAttackCooldown()
+    {
+        canAttack = true;
     }
 }
