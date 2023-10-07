@@ -44,10 +44,10 @@ public class Player : MonoBehaviour
             HandleMouseMovement();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-            Jump(); 
-        }
+        //if (Input.GetKeyDown(KeyCode.Space)) 
+        //{
+        //    Jump(); 
+        //}
 
         Move();
 
@@ -69,8 +69,6 @@ public class Player : MonoBehaviour
         float rotationAmount = mouseX * rotationSpeed * Time.deltaTime;
         rb.rotation *= Quaternion.Euler(0f, rotationAmount, 0f);
     }
-
-    private bool isJumping = false;
 
     private void Jump()
     {
@@ -97,16 +95,13 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        if (!isJumping) // Проверяем флаг прыжка
-        {
-            float moveX = Input.GetAxis("Horizontal"); // Движение по оси X (влево/вправо)
-            float moveZ = Input.GetAxis("Vertical"); // Движение по оси Z (вперед/назад)
+        float moveX = Input.GetAxis("Horizontal"); // Движение по оси X (влево/вправо)
+        float moveZ = Input.GetAxis("Vertical"); // Движение по оси Z (вперед/назад)
 
-            // Двигаем объект вперед/назад и влево/вправо по соответствующим осям с учетом физики
-            Vector3 moveDirection = (transform.forward * moveZ + transform.right * moveX * strafeSpeedScale) * moveSpeed * Time.deltaTime;
+        // Двигаем объект вперед/назад и влево/вправо по соответствующим осям с учетом физики
+        Vector3 moveDirection = (transform.forward * moveZ + transform.right * moveX * strafeSpeedScale) * moveSpeed * Time.deltaTime;
 
-            rb.MovePosition(rb.position + moveDirection);
-        }
+        rb.MovePosition(rb.position + moveDirection);
     }
 
 
