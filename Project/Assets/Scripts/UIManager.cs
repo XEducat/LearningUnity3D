@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
     public Sprite filledKey;
     public Sprite emptyKey;
     public List<Image> keyIcons;
+
+
     public static int collectedKeysCount { get; private set; } = 0;
 
 
